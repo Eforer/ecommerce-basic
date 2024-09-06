@@ -1,0 +1,11 @@
+nombre,descripcion,precio,stock,categoria_id
+"Teléfono Inteligente X1","Smartphone de última generación con cámara de 108MP",699.99,50,1
+"Laptop UltraBook Pro","Laptop ultradelgada con 16GB RAM y 512GB SSD",1299.99,30,1
+"Camiseta Vintage","Camiseta de algodón 100% con diseño retro",24.99,100,2
+"Zapatillas Running Air","Zapatillas ligeras para correr con amortiguación avanzada",89.99,75,2
+"Licuadora Potente Plus","Licuadora de 1000W con 6 velocidades y vaso de vidrio",79.99,40,3
+"Set de Sartenes Antiadherentes","Juego de 3 sartenes con revestimiento antiadherente",59.99,60,3
+"Novela 'El Misterio del Bosque'","Emocionante novela de misterio y aventuras",19.99,150,4
+"Manual de Programación Python","Guía completa para aprender Python desde cero",49.99,80,4
+"Reloj Inteligente FitTrack","Smartwatch con monitor de ritmo cardíaco y GPS",149.99,45,1
+"Vestido Elegante Noche","Vestido largo para ocasiones especiales",79.99,35,2

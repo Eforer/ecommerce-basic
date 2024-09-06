@@ -1,6 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_cors import CORS
 from producto import Producto
+from categoria import Categoria
+import io
+import csv
 
 app = Flask(__name__)
 app.secret_key = 'tu_clave_secreta'  # Asegúrate de cambiar esto a una clave segura
@@ -8,10 +11,12 @@ CORS(app)
 
 @app.route('/')
 def home():
-    productos = Producto.get_all()
-    # Asumiendo que tienes una clase similar para Categoria
-    # categorias = Categoria.get_all()
-    categorias = []  # Por ahora, dejamos esto vacío
+    categoria_id = request.args.get('categoria', type=int)
+    categorias = Categoria.get_all()
+    if categoria_id:
+        productos = Producto.get_by_categoria(categoria_id)
+    else:
+        productos = Producto.get_all()
     return render_template('home.html', productos=productos, categorias=categorias)
 
 @app.route('/producto/<int:id>')
@@ -51,6 +56,34 @@ def ver_carrito():
     carrito = session.get('carrito', [])
     total = sum(item['precio'] * item['cantidad'] for item in carrito)
     return render_template('carrito.html', carrito=carrito, total=total)
+
+
+@app.route('/importar_productos', methods=['GET', 'POST'])
+def importar_productos():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and file.filename.endswith('.csv'):
+            stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
+            csv_input = csv.reader(stream)
+            next(csv_input)  # Skip header row
+            for row in csv_input:
+                nombre, descripcion, precio, stock, categoria_id = row
+                Producto.save({
+                    'nombre': nombre,
+                    'descripcion': descripcion,
+                    'precio': float(precio),
+                    'stock': int(stock),
+                    'id_categoria': int(categoria_id)
+                })
+            flash('Productos importados exitosamente')
+            return redirect(url_for('home'))
+    return render_template('importar_productos.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
