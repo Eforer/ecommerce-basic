@@ -13,6 +13,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-900">Mi Ecommerce</h1>
             <div class="flex items-center space-x-4">
+                <a href="{{ url_for('importar_productos') }}" class="text-blue-500 hover:text-blue-700">
+                    <i data-lucide="upload"></i> Importar Productos
+                </a>
                 <a href="{{ url_for('ver_carrito') }}" class="text-gray-500 hover:text-gray-700">
                     <i data-lucide="shopping-cart"></i>
                 </a>
@@ -22,15 +25,20 @@
             </div>
         </div>
     </header>
+
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex justify-between items-center mb-6">
             <input type="text" placeholder="Buscar productos..." class="border rounded px-4 py-2 w-64">
-            <select class="border rounded px-4 py-2">
-                <option value="">Todas las categorías</option>
-                {% for categoria in categorias %}
-                <option value="{{ categoria.id_categoria }}">{{ categoria.nombre }}</option>
-                {% endfor %}
-            </select>
+            <form action="/" method="get" class="mb-8">
+                <select name="categoria" onchange="this.form.submit()" class="border rounded px-4 py-2">
+                    <option value="">Todas las categorías</option>
+                    {% for categoria in categorias %}
+                    <option value="{{ categoria.id_categoria }}" {% if request.args.get('categoria')|int == categoria.id_categoria %}selected{% endif %}>
+                        {{ categoria.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </form>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {% for producto in productos %}

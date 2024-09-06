@@ -26,6 +26,16 @@ class Producto:
         if resultados:
             return cls(resultados[0])
         return None
+    
+    @classmethod
+    def get_by_categoria(cls, categoria_id):
+        query = "SELECT * FROM PRODUCTO WHERE id_categoria = %(categoria_id)s;"
+        data = {'categoria_id': categoria_id}
+        resultados = connectToMySQL('ecommerce_db').query_db(query, data)
+        productos = []
+        for producto in resultados:
+            productos.append(cls(producto))
+        return productos
 
     @classmethod
     def save(cls, data):
