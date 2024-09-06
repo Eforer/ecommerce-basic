@@ -13,9 +13,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-900">Mi Ecommerce</h1>
             <div class="flex items-center space-x-4">
-                <button class="text-gray-500 hover:text-gray-700">
+                <a href="{{ url_for('ver_carrito') }}" class="text-gray-500 hover:text-gray-700">
                     <i data-lucide="shopping-cart"></i>
-                </button>
+                </a>
                 <button class="text-gray-500 hover:text-gray-700">
                     <i data-lucide="user"></i>
                 </button>
@@ -40,6 +40,7 @@
                 </div>
                 <div class="p-4">
                     <h3 class="text-lg font-semibold">{{ producto.nombre }}</h3>
+                    <p class="text-sm text-gray-500 mt-1">{{ producto.descripcion }}</p>
                     <p class="text-sm text-gray-500 mt-1">Stock: {{ producto.stock }}</p>
                     <div class="mt-4 flex justify-between items-center">
                         <span class="text-lg font-bold">${{ "%.2f"|format(producto.precio) }}</span>

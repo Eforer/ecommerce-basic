@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS PRODUCTO (
     id_producto INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     precio DECIMAL(10, 2) NOT NULL,
+    descripcion TEXT(100) NOT NULL,
     stock INT NOT NULL,
     id_categoria INT,
     FOREIGN KEY (id_categoria) REFERENCES CATEGORIA(id_categoria)
@@ -86,13 +87,12 @@ INSERT INTO CATEGORIA (nombre) VALUES
 ('Hogar'),
 ('Libros');
 
--- Insertar algunos productos de ejemplo
-INSERT INTO PRODUCTO (nombre, precio, stock, id_categoria) VALUES 
-('Smartphone XYZ', 599.99, 50, 1),
-('Laptop ABC', 999.99, 30, 1),
-('Camiseta Cool', 29.99, 100, 2),
-('Pantalón Casual', 49.99, 75, 2),
-('Lámpara LED', 39.99, 60, 3),
-('Set de Ollas', 89.99, 40, 3),
-('Libro de Programación', 59.99, 80, 4),
-('Novela Bestseller', 24.99, 120, 4);
+INSERT INTO PRODUCTO (nombre, precio, descripcion, stock, id_categoria) VALUES
+('Smartphone XYZ', 599.99, 'Teléfono inteligente de última generación con cámara de alta resolución', 50, 1),
+('Laptop ABC', 999.99, 'Laptop potente para trabajo y entretenimiento', 30, 1),
+('Camiseta Cool', 29.99, 'Camiseta de algodón con diseño moderno', 100, 2),
+('Pantalón Casual', 49.99, 'Pantalón cómodo para uso diario', 75, 2),
+('Lámpara LED', 39.99, 'Lámpara de escritorio con luz LED ajustable', 60, 3),
+('Set de Ollas', 89.99, 'Juego de ollas de acero inoxidable de alta calidad', 40, 3),
+('Libro de Programación', 59.99, 'Guía completa para aprender programación desde cero', 80, 4),
+('Novela Bestseller', 24.99, 'Emocionante novela de misterio y suspense', 120, 4);

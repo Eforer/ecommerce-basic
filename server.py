@@ -1,58 +1,56 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_cors import CORS
-import pymysql
-import os
+from producto import Producto
 
 app = Flask(__name__)
+app.secret_key = 'tu_clave_secreta'  # Asegúrate de cambiar esto a una clave segura
 CORS(app)
-
-# Configuración de la base de datos
-db_config = {
-    'host': os.environ.get('DB_HOST', 'localhost'),
-    'user': os.environ.get('DB_USER', 'root'),
-    'password': os.environ.get('DB_PASSWORD', 'password'),
-    'database': os.environ.get('DB_NAME', 'ecommerce_db'),
-    'cursorclass': pymysql.cursors.DictCursor
-}
-
-def get_db_connection():
-    return pymysql.connect(**db_config)
 
 @app.route('/')
 def home():
-    connection = get_db_connection()
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute('SELECT * FROM producto')
-            productos = cursor.fetchall()
-        
-        with connection.cursor() as cursor:
-            cursor.execute('SELECT * FROM categoria')
-            categorias = cursor.fetchall()
-    finally:
-        connection.close()
-    
+    productos = Producto.get_all()
+    # Asumiendo que tienes una clase similar para Categoria
+    # categorias = Categoria.get_all()
+    categorias = []  # Por ahora, dejamos esto vacío
     return render_template('home.html', productos=productos, categorias=categorias)
 
 @app.route('/producto/<int:id>')
 def detalle_producto(id):
-    connection = get_db_connection()
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute('SELECT * FROM producto WHERE id_producto = %s', (id,))
-            producto = cursor.fetchone()
-        if producto:
-            return render_template('producto.html', producto=producto)
-        else:
-            return "Producto no encontrado", 404
-    finally:
-        connection.close()
+    producto = Producto.get_by_id(id)
+    if producto:
+        return render_template('producto.html', producto=producto)
+    else:
+        return "Producto no encontrado", 404
 
 @app.route('/agregar_al_carrito/<int:id>', methods=['POST'])
 def agregar_al_carrito(id):
-    # Aquí iría la lógica para agregar al carrito
-    # Por ahora, solo devolvemos un mensaje de éxito
-    return f"<div class='text-green-500'>Producto {id} añadido al carrito</div>"
+    if 'carrito' not in session:
+        session['carrito'] = []
+    
+    producto = Producto.get_by_id(id)
+    if producto:
+        carrito = session['carrito']
+        item = next((item for item in carrito if item['id'] == id), None)
+        if item:
+            item['cantidad'] += 1
+        else:
+            carrito.append({
+                'id': producto.id_producto,
+                'nombre': producto.nombre,
+                'descripcion': producto.descripcion,
+                'precio': float(producto.precio),
+                'cantidad': 1
+            })
+        session['carrito'] = carrito
+        return f"<div class='text-green-500'>Producto {producto.nombre} añadido al carrito</div>"
+    else:
+        return "Producto no encontrado", 404
+
+@app.route('/carrito')
+def ver_carrito():
+    carrito = session.get('carrito', [])
+    total = sum(item['precio'] * item['cantidad'] for item in carrito)
+    return render_template('carrito.html', carrito=carrito, total=total)
 
 if __name__ == '__main__':
     app.run(debug=True)
