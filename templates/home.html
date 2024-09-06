@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Ecommerce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="min-h-screen bg-gray-100">
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">Mi Ecommerce</h1>
+            <div class="flex items-center space-x-4">
+                <button class="text-gray-500 hover:text-gray-700">
+                    <i data-lucide="shopping-cart"></i>
+                </button>
+                <button class="text-gray-500 hover:text-gray-700">
+                    <i data-lucide="user"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <input type="text" placeholder="Buscar productos..." class="border rounded px-4 py-2 w-64">
+            <select class="border rounded px-4 py-2">
+                <option value="">Todas las categorías</option>
+                {% for categoria in categorias %}
+                <option value="{{ categoria.id_categoria }}">{{ categoria.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for producto in productos %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="aspect-w-1 aspect-h-1 bg-gray-200 flex items-center justify-center">
+                    <i data-lucide="package" class="h-24 w-24 text-gray-400"></i>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold">{{ producto.nombre }}</h3>
+                    <p class="text-sm text-gray-500 mt-1">Stock: {{ producto.stock }}</p>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-lg font-bold">${{ "%.2f"|format(producto.precio) }}</span>
+                        <a href="{{ url_for('detalle_producto', id=producto.id_producto) }}" class="text-blue-500 hover:underline mr-2">Ver detalles</a>
+                        <button hx-post="{{ url_for('agregar_al_carrito', id=producto.id_producto) }}" hx-swap="outerHTML" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            Añadir al carrito
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
